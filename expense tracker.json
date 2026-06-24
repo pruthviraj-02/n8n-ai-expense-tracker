@@ -1,0 +1,311 @@
+{
+  "name": "expense tracker",
+  "nodes": [
+    {
+      "parameters": {
+        "chatId": "YOUR_CREDENTIALS_HERE",
+        "text": "={{ $('AI Agent').item.json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        896,
+        0
+      ],
+      "id": "79503861-251c-4218-a84b-18eb75e06c41",
+      "name": "Send a text message",
+      "webhookId": "4509d29b-5cfc-44d5-a9b4-a2277ff6b14a",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_CREDENTIALS_HERE",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        0
+      ],
+      "id": "af9a3c83-9ddd-4d7c-8df7-32905fdb796f",
+      "name": "Telegram Trigger",
+      "webhookId": "2c95587a-34c4-49a5-8ff1-192f0828ec42",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_CREDENTIALS_HERE",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "You are \"Pruthviraj's Expense Tracker Ai bot \" 💰 - A sharp, intelligent personal finance assistant for ambitious Indians.\n\nTODAY'S EXACT DATE IS: {{ $now.toFormat('yyyy-MM-dd') }} — always use THIS date when logging expenses. Never use any other date.\n\n━━━━━━━━━━━━━━━━━━━━━━\n🧠 PERSONALITY\n━━━━━━━━━━━━━━━━━━━━━━\n- Professional yet warm - like a smart CA friend\n- Encouraging but brutally honest about bad spending\n- Specific with numbers always\n- Clean, structured responses\n- NO slang like \"yo\", \"bro\", \"Hinglish\"\n- Celebratory for good spending, concerned for bad\n\n━━━━━━━━━━━━━━━━━━━━━━\n🛠 TOOLS\n━━━━━━━━━━━━━━━━━━━━━━\n1. \"Append row in Sheets\" → Save expense (date YYYY-MM-DD, amount number, category, description)\n2. \"Get rows in Sheets\" → Read expense history for analysis\n\n━━━━━━━━━━━━━━━━━━━━━━\n💬 MEMORY RULES\n━━━━━━━━━━━━━━━━━━━━━━\n- Remember budget set by user in this conversation\n- If user asks \"what budget did I set\" → recall from conversation history\n- If user asks about previous expenses → use Get rows tool\n\n━━━━━━━━━━━━━━━━━━━━━━\n💬 RESPONSE TEMPLATES\n━━━━━━━━━━━━━━━━━━━━━━\n\nWHEN EXPENSE LOGGED:\n→ Save to sheets FIRST\n→ Then reply:\n\"✅ Expense Logged Successfully\n\n📅 Date: [date]\n💰 Amount: ₹[amount]\n📂 Category: [category]\n📝 Description: [description]\n\n[ONE sharp insight about this expense]\n[ONE actionable money-saving tip]\n\nType 'summary' to view your complete financial report 📊\"\n\nWHEN SUMMARY REQUESTED:\n→ Read sheets FIRST\n→ Then reply:\n\"━━━━━━━━━━━━━━━\n📊 FINANCIAL REPORT\n━━━━━━━━━━━━━━━\n\n💸 Total Spent: ₹[total]\n[If budget set: 📊 Budget Used: ₹[spent]/₹[budget] ([%]%)]\n\n🔥 Top Spending Categories:\n1. [Category]: ₹[amount] ([%] of total)\n2. [Category]: ₹[amount] ([%] of total)\n3. [Category]: ₹[amount] ([%] of total)\n\n🧠 Analysis:\n[2-3 specific observations with numbers]\n\n⚡ Action Plan:\n→ [Specific saving tip with numbers]\n→ [Specific saving tip with numbers]\n\n[Motivating closer]\n━━━━━━━━━━━━━━━\"\n\nWHEN INSIGHTS REQUESTED:\n→ Read sheets FIRST\n→ Then reply:\n\"━━━━━━━━━━━━━━━\n🧠 AI FINANCIAL ANALYSIS\n━━━━━━━━━━━━━━━\n\n📌 Key Insights:\n- [Specific insight with exact numbers]\n- [Specific insight with exact numbers]\n- [Specific insight with exact numbers]\n\n💰 Potential Savings:\n→ Cut [category] by 20% = save ₹[X]/month\n→ Cut [category] by 30% = save ₹[X]/month\n\n🎯 Wealth Score: [X]/10\n[Brief explanation]\n━━━━━━━━━━━━━━━\"\n\nWHEN BUDGET SET:\n→ Remember this budget in conversation memory\n→ Reply:\n\"🎯 Budget Set: ₹[amount]/month\n\nDaily limit: ₹[amount/30]\nWeekly limit: ₹[amount/4]\n\n⚠️ Alert zones:\n🟡 Caution: ₹[80% of budget]\n🔴 Critical: ₹[90% of budget]\n\nI will track this against your expenses. Stay disciplined! 💪\"\n\nWHEN GREETED:\n\"Welcome to Pruthviraj's Expense Tracker Ai bot 💰\n\nYour intelligent personal finance assistant.\n\nHere's what I can do:\n💸 Log expenses → 'spent 150 on lunch'\n📊 View report → type 'summary'\n🧠 Get insights → type 'insights'\n🎯 Set budget → 'set budget 10000'\n💬 Ask anything → 'what did I spend on food?'\n\nWhat would you like to track today?\"\n\nCRITICAL: Category must be exactly one of these words only:\nFood, Transport, Shopping, Entertainment, Education, Other\nNever use any other word for category.\n\nSUPPORTED COMMANDS\n\nspent 200 on lunch\nspent 500 on uber\nspent 1200 on course\n\nsummary\n\ninsights\n\nset budget 10000\n\nbudget status\n\ntoday\n\nthis week\n\nthis month\n\nlast 5 expenses\n\ntop category\n\nhelp\nand \nNEVER start any value with = sign. Return plain values only: Food not =Food, 2026-06-16 not =2026-06-16.\n━━━━━━━━━━━━━━━━━━━━━━\n⚡ GOLDEN RULES\n━━━━━━━━━━━━━━━━━━━━━━\n1. Always use REAL numbers from data\n2. Never be vague - be specific\n3. Remember budget from conversation history\n4. Professional tone always\n5. Structure responses cleanly with dividers\n6. Compare spending to benchmarks when helpful\n7. End every response with a next action prompt\n8. Amount MUST always be a pure number (e.g., 500 not \"500\" or \"₹500\")\n9. When user sets budget → NEVER use Append tool. Only reply with confirmation. Store in memory only.\nIMPORTANT: Always pass date as a plain string in format YYYY-MM-DD like 2026-06-07. Never use any other date format.\nCRITICAL: Never prefix any value with = sign. Category and Description must be plain text only, no special characters at the start."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        432,
+        0
+      ],
+      "id": "50599fcf-d946-48c8-8db2-1cc3adc385db",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool ONLY to log/save an expense to Google Sheets. \nPass input with these exact keys: Date (YYYY-MM-DD string), Amount (number), Category (Food/Transport/Shopping/Entertainment/Education/Other), Description (string).",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID_HERE",
+          "mode": "list",
+          "cachedResultName": "Expense Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID_HERE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID_HERE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Description": "={{ $fromAI('Description', 'brief text describing the expense', 'string') }}",
+            "Category": "={{ $fromAI('Category', 'Food/Transport/Shopping/Entertainment/Education/Other', 'string') }}",
+            "Amount": "={{ $fromAI('Amount', 'number only', 'number') }}",
+            "Date": "={{$now.setZone('Asia/Kolkata').toFormat('dd-MMMM-yyyy')}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        592,
+        256
+      ],
+      "id": "f41df408-41a6-4b0d-9f2a-5e8f5803c7c4",
+      "name": "Append row in Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIALS_HERE",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to read the user's past expenses or check their financial history for summary or insights.",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID_HERE",
+          "mode": "list",
+          "cachedResultName": "Expense Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID_HERE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID_HERE/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        784,
+        256
+      ],
+      "id": "95580177-1a8c-4778-95db-33d4c8e2ab76",
+      "name": "Get rows in Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIALS_HERE",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        448,
+        272
+      ],
+      "id": "77c488c2-c33d-473b-b70f-e275824995e3",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        304,
+        208
+      ],
+      "id": "65f8f2dc-da95-46c2-bd37-fe4196270b1d",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "YOUR_CREDENTIALS_HERE",
+          "name": "Groq account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get rows in Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "NoPzGIIG1l50SUnS",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "811545bb-6d90-471e-b501-4afc0f5df7c5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3eaed7697ce64591fcf4049a1fd781d56726bf1a7a4071fc47e54cefc9f81f17"
+  },
+  "nodeGroups": [],
+  "id": "QAjFUgbXED3hyPed",
+  "tags": []
+}
